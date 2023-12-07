@@ -1,0 +1,93 @@
+@import url('https://fonts.googleapis.com/css2?family=Acme&family=Montserrat:ital,wght@0,100;0,200;0,700;0,800;1,300;1,400;1,500;1,600&display=swap');
+
+$dark: #161616;
+$gray: #282828;
+
+body {
+    margin: 0;
+    padding: 0;
+    background-color: #282828;
+    font-family: 'Montserrat', sans-serif;
+
+    header {
+        background-color: #161616;
+        height: 110px;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-family: 'Acme', sans-serif;
+        color: white;
+        font-size: 1.6em;
+        margin-bottom: 30px;
+
+        img {
+            width: 70px;
+            height: auto;
+            padding: 0 20px;
+        }
+    }
+
+    .container {
+        max-width: 90%;
+    }
+
+    .tag {
+        background-color: $dark;
+        color: white;
+        display: inline-block;
+        border-radius: 100px;
+        width: auto;
+
+        .inner {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 5px;
+        }
+
+        .inner>* {
+            padding: 0 5px;
+        }
+    }
+
+    .note {
+        margin: 20px 0;
+        color: white;
+        border-radius: 45px;
+        padding: 10px 40px;
+        display: flex;
+        justify-content: space-between;
+
+        .tag {
+            background-color: transparent;
+            margin-bottom: 15px;
+
+            .inner {
+                padding-left: 0;
+            }
+        }
+
+        h5{
+            font-weight: 600;
+        }
+
+        .menu{
+                margin-top: 10px;
+        }
+    }
+
+    .circle{
+        background-color: #00B3FF;
+        height: 100px;
+        width: 100px;
+        border-radius: 100px;
+        color: white;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 6em;
+        font-weight: 400;
+
+    }
+}
