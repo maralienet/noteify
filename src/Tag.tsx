@@ -1,13 +1,13 @@
 import React, { useState, FormEvent, FC } from 'react';
 import tags from './data/tags.json';
 
-
 export interface TagProps {
   color: string;
   text: string;
 }
 
 export const Tag: React.FC<TagProps> = ({ color, text }) => {
+
   return (
     <div className="tag">
       <div className="inner">
@@ -29,9 +29,7 @@ export const Tags = () => {
   return (
     <>
       {(tags as any[]).map((el) => (
-        <div className="tag" key={count++}>
-          <Tag color={el.color} text={el.text} />
-        </div>
+        <Tag color={el.color} text={el.text} key={count++} />
       ))}
     </>
   );
@@ -60,12 +58,23 @@ export const TagForm: FC<TagFormProps> = ({ onClose }) => {
 
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
-    var tag = { "color": color, "text": text };
-    const currentTags = JSON.parse(localStorage.getItem('tags') || '[]');
+    var tag = { color: color, text: text };
+    
+    fetch('http://localhost:3001/tags', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(tag),
+    })
+    .then(response => response.json())
+    .then(data => {
+      console.log('Успешно добавлен тег:', data);
+    })
+    .catch((error) => {
+      console.error('Ошибка:', error);
+    });
 
-    currentTags.push(tag);
-
-    localStorage.setItem('tags', JSON.stringify(currentTags));
 
     onClose();
   };

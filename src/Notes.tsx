@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, FormEvent, FC } from "react";
 import { Tag } from './Tag';
 import { Col } from 'react-bootstrap';
 
@@ -40,11 +40,65 @@ class Notes extends React.Component {
 }
 
 export const AddNote = () => {
+    const [isOpen, setIsOpen] = useState(false);
+    let isOp = isOpen;
     return (
-      <div className="circle">
-        <span>+</span>
-      </div>
+        <>
+            <div className="circle" onClick={() => setIsOpen(!isOp)}>
+                <span>+</span>
+            </div>
+            {isOpen && <NoteForm onClose={() => setIsOpen(false)} />}
+        </>
     )
-  }
+}
+interface NoteFormProps {
+    onClose: () => void;
+}
+
+export const NoteForm: FC<NoteFormProps> = ({ onClose }) => {
+    const [tagProps, setTagProps] = useState('');
+    const [text, setText] = useState('');
+    const [header, setTHeader] = useState('');
+
+    const handleSubmit = async (event: FormEvent) => {
+        event.preventDefault();
+        var note = { header: header, text: text, tagProps:tagProps };
+
+        fetch('http://localhost:3001/notes', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(note),
+        })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Успешно добавлена заметка:', data);
+            })
+            .catch((error) => {
+                console.error('Ошибка:', error);
+            });
+
+
+        onClose();
+    };
+
+    return (
+        <div className="divNoteAdd">
+            <form onSubmit={handleSubmit}>
+                <h5>Добавление заметки</h5>
+                <input type="text" value={tagProps} onChange={(e) => setTagProps(e.target.value)} />
+
+                <input type="text" placeholder="Заголовок" value={header} onChange={(e) => setTHeader(e.target.value)} required />
+
+                <textarea value={text} placeholder="Текст" onChange={(e) => setText(e.target.value)} />
+                
+                <button type="submit">Добавить</button>
+            </form>
+        </div>
+
+    );
+};
+
 
 export default Notes;
