@@ -2,6 +2,7 @@
 
 $dark: #161616;
 $gray: #282828;
+$blue: #00B3FF;
 
 body {
     margin: 0;
@@ -29,7 +30,7 @@ body {
     }
 
     .container {
-        max-width: 90%;
+        max-width: 75%;
     }
 
     .tag {
@@ -38,7 +39,7 @@ body {
         display: inline-block;
         border-radius: 100px;
         width: auto;
-        margin: 0 13px;
+        margin: 0 7.5px;
 
         .inner {
             display: flex;
@@ -50,7 +51,8 @@ body {
         .inner>* {
             padding: 0 5px;
         }
-        &:hover{
+
+        &:hover {
             background: #1a1a1a;
         }
     }
@@ -59,6 +61,7 @@ body {
         margin: 20px 0;
         border-radius: 45px;
         padding: 10px 40px;
+        min-height: 145px;
         display: flex;
         justify-content: space-between;
 
@@ -83,7 +86,12 @@ body {
         }
     }
 
-    @mixin circle{
+    .noNotes {
+        text-align: center;
+        margin: 30px 0;
+    }
+
+    @mixin circle {
         cursor: pointer;
         justify-content: center;
         align-items: center;
@@ -99,18 +107,59 @@ body {
         height: auto;
         font-size: 1.4em;
 
-        &:hover{
+        &:hover {
             background: #1a1a1a;
+        }
+    }
+
+    .divTagAdd {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 1000;
+        background-color: $dark;
+        width: 300px;
+        height: 240px;
+        border-radius: 40px;
+
+        form{
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+
+            h5{
+                text-align: center;
+            }
+
+            input{
+                margin-bottom: 10px;
+                color: black;
+            }
+            input[type="text"],button{
+                border-radius: 40px;
+                padding: 2px 10px;
+                font-weight: 600;
+            }
+            button{
+                background-color: $blue;
+                color: white;
+                font-weight: bold;
+                height: 40px;
+            }
         }
     }
 
     .circle {
         @include circle;
-        background-color: #00B3FF;
+        background-color: $blue;
         height: 100px;
         width: 100px;
         font-size: 6em;
         font-weight: 400;
+        position: fixed;
+        top: 85%;
+        left: 90%;
 
         &:hover {
             box-shadow: 0px 0px 15px #2f85ab;

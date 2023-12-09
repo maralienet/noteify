@@ -1,32 +1,50 @@
 import React from "react";
-import Tag, { TagProps } from './Tag';
+import { Tag } from './Tag';
+import { Col } from 'react-bootstrap';
 
-interface NotesProps {
-    header?: string;
-    text: string;
-    tagProps: TagProps;
-}
+import notes from './data/notes.json';
 
-class Notes extends React.Component<NotesProps> {
+var count = 1;
+class Notes extends React.Component {
     render() {
-        const { header, text, tagProps } = this.props;
-        return (
-            <div className="note" style={{ border: `2.5px solid ${tagProps.color}` }}>
-                <div className="content">
-                    <Tag {...tagProps} />
-                    {header && <h5>{header}</h5>}
-                    <p>{text}</p>
+        if ((notes as any[]).length > 0) {
+            return (
+                (notes as any[]).map((el) => (
+                    <Col lg={6} xs={12}>
+                        <div className="note" style={{ border: `2.5px solid ${el.tagProps && el.tagProps.color}` }} key={count++}>
+                            <div className="content">
+                                <Tag {...el.tagProps} />
+                                {el.header && <h5>{el.header}</h5>}
+                                <p>{el.text}</p>
+                            </div>
+                            <div className="menu">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="6" height="26" viewBox="0 0 6 26" fill="none">
+                                    <circle cx="3" cy="3" r="3" fill="#D9D9D9" />
+                                    <circle cx="3" cy="13" r="3" fill="#D9D9D9" />
+                                    <circle cx="3" cy="23" r="3" fill="#D9D9D9" />
+                                </svg>
+                            </div>
+                        </div>
+                    </Col>
+                ))
+            );
+        }
+        else {
+            return (
+                <div className="noNotes">
+                    <h2>Заметок нет</h2>
                 </div>
-                <div className="menu">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="6" height="26" viewBox="0 0 6 26" fill="none">
-                        <circle cx="3" cy="3" r="3" fill="#D9D9D9" />
-                        <circle cx="3" cy="13" r="3" fill="#D9D9D9" />
-                        <circle cx="3" cy="23" r="3" fill="#D9D9D9" />
-                    </svg>
-                </div>
-            </div>
-        );
+            );
+        }
     }
 }
+
+export const AddNote = () => {
+    return (
+      <div className="circle">
+        <span>+</span>
+      </div>
+    )
+  }
 
 export default Notes;
