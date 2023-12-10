@@ -67,7 +67,7 @@ app.get('/notes/:note', (req, res) => {
     }
     let notes = JSON.parse(data);
     let noteId = req.params.note;
-    let note = notes.find(n => n.id == noteId); 
+    let note = notes.find(n => n.id == noteId);
     res.send(note);
   });
 });
@@ -112,7 +112,7 @@ app.put('/notes/:noteId', (req, res) => {
       res.status(404).send('Заметка не найдена');
       return;
     }
-    notes[noteIndex] = {...notes[noteIndex], ...req.body};
+    notes[noteIndex] = { ...notes[noteIndex], ...req.body };
     fs.writeFile(path.join(__dirname, 'data/notes.json'), JSON.stringify(notes), 'utf8', (err) => {
       if (err) {
         console.error("Ошибка записи в файл", err);

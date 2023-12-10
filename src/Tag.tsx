@@ -1,7 +1,7 @@
 import React, { useState, FormEvent, FC } from 'react';
 import tags from './data/tags.json';
 
-export interface TagProps {
+interface TagProps {
   color: string;
   text: string;
 }
@@ -23,12 +23,13 @@ export const Tag: React.FC<TagProps> = ({ color, text }) => {
   );
 }
 
+
 var count = 1;
 export const Tags = () => {
   return (
     <>
       {(tags as any[]).map((el) => (
-        <Tag color={el.color} text={el.text} key={count++} />
+        <Tag color={el.color} text={el.text} key={count++}/>
       ))}
     </>
   );
