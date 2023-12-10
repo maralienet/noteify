@@ -2,10 +2,64 @@ import React, { useState, FormEvent, FC } from "react";
 import { Tag } from './Tag';
 import { Col } from 'react-bootstrap';
 
-import notes from './data/notes.json';
+import edit from './edit.png';
+import deleted from './delete.png';
 
+import notes from './data/notes.json';
+import tags from './data/tags.json';
+
+interface NoteState {
+    isMenuOpen: boolean;
+    noteId: string | null;
+    isOnEditing: boolean;
+}
 var count = 1;
-class Notes extends React.Component {
+class Notes extends React.Component<{}, NoteState> {
+
+    state: NoteState = {
+        isMenuOpen: false,
+        noteId: null,
+        isOnEditing: false
+    };
+
+    handleDelete = (noteId: string) => {
+        fetch(`http://localhost:3001/notes/${noteId}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Успешно удалена заметка:', data);
+            })
+            .catch((error) => {
+                console.error('Ошибка:', error);
+            });
+    };
+
+    openEdit = () => {
+        this.setState({ isOnEditing: true });
+    }
+
+    handleEdit = (noteId: string, updatedNote: object) => {
+        fetch(`http://localhost:3001/notes/${noteId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(updatedNote)
+        })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Успешно обновлена заметка:', data);
+            })
+            .catch((error) => {
+                console.error('Ошибка:', error);
+            });
+    };
+
+
     render() {
         if ((notes as any[]).length > 0) {
             return (
@@ -18,11 +72,9 @@ class Notes extends React.Component {
                                 <p>{el.text}</p>
                             </div>
                             <div className="menu">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="6" height="26" viewBox="0 0 6 26" fill="none">
-                                    <circle cx="3" cy="3" r="3" fill="#D9D9D9" />
-                                    <circle cx="3" cy="13" r="3" fill="#D9D9D9" />
-                                    <circle cx="3" cy="23" r="3" fill="#D9D9D9" />
-                                </svg>
+                                <button className="edit" onClick={() => this.openEdit()}><img src={edit} /></button>
+                                {this.state.isOnEditing && <NoteForm onClose={() => this.setState({ isOnEditing: false })} />}
+                                <button className="delete" onClick={() => this.handleDelete(el.id)}><img src={deleted} /></button>
                             </div>
                         </div>
                     </Col>
@@ -62,7 +114,14 @@ export const NoteForm: FC<NoteFormProps> = ({ onClose }) => {
 
     const handleSubmit = async (event: FormEvent) => {
         event.preventDefault();
-        var note = { header: header, text: text, tagProps:tagProps };
+        var noteId = (notes as any[])[(notes as any[]).length - 1]["id"];
+
+        var note = {
+            id: noteId + 1,
+            header: header,
+            text: text,
+            tagProps: { color: tagProps.split(',')[0], text: tagProps.split(',')[1] }
+        };
 
         fetch('http://localhost:3001/notes', {
             method: 'POST',
@@ -78,25 +137,30 @@ export const NoteForm: FC<NoteFormProps> = ({ onClose }) => {
             .catch((error) => {
                 console.error('Ошибка:', error);
             });
-
-
         onClose();
-    };
+    }
 
     return (
         <div className="divNoteAdd">
             <form onSubmit={handleSubmit}>
                 <h5>Добавление заметки</h5>
-                <input type="text" value={tagProps} onChange={(e) => setTagProps(e.target.value)} />
 
-                <input type="text" placeholder="Заголовок" value={header} onChange={(e) => setTHeader(e.target.value)} required />
 
-                <textarea value={text} placeholder="Текст" onChange={(e) => setText(e.target.value)} />
-                
+                <select className='Select' onChange={(e) => setTagProps(e.target.value)}>
+                    {(tags as any[]).map((el) => (
+                        <option className='Select__option' value={[el.color, el.text]} key={el.text}>
+                            {el.text}
+                        </option>
+                    ))}
+                </select >
+
+                <input type="text" placeholder="Заголовок" value={header} onChange={(e) => setTHeader(e.target.value)} />
+
+                <textarea value={text} placeholder="Текст" onChange={(e) => setText(e.target.value)} required />
+
                 <button type="submit">Добавить</button>
             </form>
         </div>
-
     );
 };
 

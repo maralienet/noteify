@@ -7,7 +7,6 @@ export interface TagProps {
 }
 
 export const Tag: React.FC<TagProps> = ({ color, text }) => {
-
   return (
     <div className="tag">
       <div className="inner">
