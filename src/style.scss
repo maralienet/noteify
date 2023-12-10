@@ -109,6 +109,9 @@ body {
                 }
             }
         }
+        .divNoteAdd{
+
+        }
     }
 
     .noNotes {
@@ -160,7 +163,9 @@ body {
 
             input {
                 margin-bottom: 10px;
-                color: black;
+                color: white;
+                background: $gray;
+                border: none;
             }
 
             input[type="text"],
@@ -172,7 +177,7 @@ body {
 
             button {
                 background-color: $blue;
-                color: white;
+                color: black;
                 font-weight: bold;
                 height: 40px;
             }

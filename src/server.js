@@ -57,6 +57,7 @@ app.get('/notes', (req, res) => {
     res.send(JSON.parse(data));
   });
 });
+
 app.get('/notes/:note', (req, res) => {
   fs.readFile(path.join(__dirname, 'data/notes.json'), 'utf8', (err, data) => {
     if (err) {
@@ -70,6 +71,7 @@ app.get('/notes/:note', (req, res) => {
     res.send(note);
   });
 });
+
 app.delete('/notes/:noteId', (req, res) => {
   fs.readFile(path.join(__dirname, 'data/notes.json'), 'utf8', (err, data) => {
     if (err) {

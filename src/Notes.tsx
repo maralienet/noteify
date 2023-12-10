@@ -1,4 +1,4 @@
-import React, { useState, FormEvent, FC } from "react";
+import React, { useState, FormEvent, FC, useEffect } from "react";
 import { Tag } from './Tag';
 import { Col } from 'react-bootstrap';
 
@@ -11,7 +11,7 @@ import tags from './data/tags.json';
 interface NoteState {
     isMenuOpen: boolean;
     noteId: string | null;
-    isOnEditing: boolean;
+    isOnEditing: { [key: string]: boolean };
 }
 var count = 1;
 class Notes extends React.Component<{}, NoteState> {
@@ -19,7 +19,7 @@ class Notes extends React.Component<{}, NoteState> {
     state: NoteState = {
         isMenuOpen: false,
         noteId: null,
-        isOnEditing: false
+        isOnEditing: {}
     };
 
     handleDelete = (noteId: string) => {
@@ -38,27 +38,11 @@ class Notes extends React.Component<{}, NoteState> {
             });
     };
 
-    openEdit = () => {
-        this.setState({ isOnEditing: true });
+    openEdit = (id: string) => {
+        this.setState(prevState => ({
+            isOnEditing: { ...(prevState.isOnEditing || {}), [id]: !(prevState.isOnEditing && prevState.isOnEditing[id]) }
+        }));
     }
-
-    handleEdit = (noteId: string, updatedNote: object) => {
-        fetch(`http://localhost:3001/notes/${noteId}`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(updatedNote)
-        })
-            .then(response => response.json())
-            .then(data => {
-                console.log('Успешно обновлена заметка:', data);
-            })
-            .catch((error) => {
-                console.error('Ошибка:', error);
-            });
-    };
-
 
     render() {
         if ((notes as any[]).length > 0) {
@@ -72,10 +56,10 @@ class Notes extends React.Component<{}, NoteState> {
                                 <p>{el.text}</p>
                             </div>
                             <div className="menu">
-                                <button className="edit" onClick={() => this.openEdit()}><img src={edit} /></button>
-                                {this.state.isOnEditing && <NoteForm onClose={() => this.setState({ isOnEditing: false })} />}
+                                <button className="edit" onClick={() => this.openEdit(el.id)}><img src={edit} /></button>
                                 <button className="delete" onClick={() => this.handleDelete(el.id)}><img src={deleted} /></button>
                             </div>
+                            {this.state.isOnEditing[el.id] && <NoteFormChange onClose={() => this.openEdit(el.id)} noteId={el.id}/>}
                         </div>
                     </Col>
                 ))
@@ -90,6 +74,7 @@ class Notes extends React.Component<{}, NoteState> {
         }
     }
 }
+
 
 export const AddNote = () => {
     const [isOpen, setIsOpen] = useState(false);
@@ -145,7 +130,6 @@ export const NoteForm: FC<NoteFormProps> = ({ onClose }) => {
             <form onSubmit={handleSubmit}>
                 <h5>Добавление заметки</h5>
 
-
                 <select className='Select' onChange={(e) => setTagProps(e.target.value)}>
                     {(tags as any[]).map((el) => (
                         <option className='Select__option' value={[el.color, el.text]} key={el.text}>
@@ -159,6 +143,78 @@ export const NoteForm: FC<NoteFormProps> = ({ onClose }) => {
                 <textarea value={text} placeholder="Текст" onChange={(e) => setText(e.target.value)} required />
 
                 <button type="submit">Добавить</button>
+            </form>
+        </div>
+    );
+};
+
+interface NoteFormChangeProps {
+    onClose: () => void;
+    noteId: string;
+}
+export const NoteFormChange: FC<NoteFormChangeProps> = ({ onClose, noteId }) => {
+    const [tagProps, setTagProps] = useState('');
+    const [text, setText] = useState('');
+    const [header, setTHeader] = useState('');
+
+    useEffect(() => {
+        fetch(`http://localhost:3001/notes/${noteId}`)
+            .then(response => response.json())
+            .then(data => {
+                setTHeader(data.header);
+                setText(data.text);
+                setTagProps(`${data.tagProps.color},${data.tagProps.text}`);
+            })
+            .catch((error) => {
+                console.error('Ошибка:', error);
+            });
+    }, [noteId]);
+
+    const handleSubmit = async (event: FormEvent) => {
+        event.preventDefault();
+        var note = {
+            id: noteId,
+            header: header,
+            text: text,
+            tagProps: { color: tagProps.split(',')[0], text: tagProps.split(',')[1] }
+        };
+
+        fetch(`http://localhost:3001/notes/${noteId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(note)
+        })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Успешно обновлена заметка:', data);
+            })
+            .catch((error) => {
+                console.error('Ошибка:', error);
+            });
+        onClose();
+    }
+
+    return (
+        <div className="divNoteAdd">
+            <form onSubmit={handleSubmit}>
+                <h5>Изменение заметки</h5>
+
+
+                <select className='Select' onChange={(e) => setTagProps(e.target.value)}>
+                    {(tags as any[]).map((el) => (
+                        <option className='Select__option' value={[el.color, el.text]} key={el.text}>
+                            {el.text}
+                        </option>
+                    ))}
+                </select >
+
+                <input type="text" placeholder="Заголовок" value={header} onChange={(e) => setTHeader(e.target.value)} />
+
+                <textarea value={text} placeholder="Текст" onChange={(e) => setText(e.target.value)} required />
+
+                <button type="submit">Изменить</button>
             </form>
         </div>
     );
