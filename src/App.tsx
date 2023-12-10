@@ -1,6 +1,6 @@
 import React from 'react';
 import logo from './logo.png';
-import './style.scss';
+import './style.sass';
 import { Container, Row, Col } from 'react-bootstrap';
 import { Tags, AddTag } from './Tag';
 import Notes, { AddNote } from './Notes';
