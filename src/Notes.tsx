@@ -59,7 +59,7 @@ class Notes extends React.Component<{}, NoteState> {
                                 <button className="edit" onClick={() => this.openEdit(el.id)}><img src={edit} /></button>
                                 <button className="delete" onClick={() => this.handleDelete(el.id)}><img src={deleted} /></button>
                             </div>
-                            {this.state.isOnEditing[el.id] && <NoteFormChange onClose={() => this.openEdit(el.id)} noteId={el.id}/>}
+                            {this.state.isOnEditing[el.id] && <NoteFormChange onClose={() => this.openEdit(el.id)} noteId={el.id} />}
                         </div>
                     </Col>
                 ))
@@ -128,7 +128,9 @@ export const NoteForm: FC<NoteFormProps> = ({ onClose }) => {
     return (
         <div className="divNoteAdd">
             <form onSubmit={handleSubmit}>
+                <button className="close" onClick={onClose}><span>✕</span></button>
                 <h5>Добавление заметки</h5>
+
 
                 <select className='Select' onChange={(e) => setTagProps(e.target.value)}>
                     {(tags as any[]).map((el) => (
@@ -199,6 +201,7 @@ export const NoteFormChange: FC<NoteFormChangeProps> = ({ onClose, noteId }) => 
     return (
         <div className="divNoteAdd">
             <form onSubmit={handleSubmit}>
+            <button className="close" onClick={onClose}><span>✕</span></button>
                 <h5>Изменение заметки</h5>
 
 
